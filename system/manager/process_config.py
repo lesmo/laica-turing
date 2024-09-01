@@ -106,6 +106,9 @@ procs = [
   NativeProcess("classic_modeld", "selfdrive/classic_modeld", ["./classic_modeld"], run_classic_modeld),
   PythonProcess("fleet_manager", "selfdrive.frogpilot.fleetmanager.fleet_manager", always_run),
   PythonProcess("frogpilot_process", "selfdrive.frogpilot.frogpilot_process", always_run),
+  
+  # Laica processes
+  PythonProcess("laica", "selfdrive.laica.api", always_run),
 ]
 
 managed_processes = {p.name: p for p in procs}
