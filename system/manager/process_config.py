@@ -104,7 +104,7 @@ procs = [
   PythonProcess("mapd", "selfdrive.frogpilot.navigation.mapd", always_run),
 
   # Laica processes
-  PythonProcess("laica", "selfdrive.laica.api", only_onroad),
+  PythonProcess("laica", "selfdrive.laica.api", always_run),
 ]
 
 managed_processes = {p.name: p for p in procs}
