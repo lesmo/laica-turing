@@ -1,22 +1,10 @@
 #!/usr/bin/env python3
-import capnp
-
 from cereal import messaging
 from openpilot.common.realtime import set_core_affinity
 from openpilot.common.swaglog import cloudlog
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response
 
-
-def capnp_to_dict(capnp_obj):
-    # Convert capnp._DynamicStructReader to a dictionary recursively
-    result = {}
-    for field in capnp_obj.schema.fields:
-        value = getattr(capnp_obj, field)
-        if isinstance(value, capnp._DynamicStructReader):
-            result[field] = capnp_to_dict(value)
-        else:
-            result[field] = value
-    return result
+from .util import capnp_to_json
 
 
 app = Flask(__name__)
@@ -30,7 +18,11 @@ def data(service):
   sm = messaging.SubMaster([service])
   sm.update()
 
-  return jsonify(capnp_to_dict(sm[service]))
+  json = capnp_to_json(sm[service])
+  res = make_response(json)
+  res.headers['Content-Type'] = 'application/json'
+
+  return res
 
 
 def main():
