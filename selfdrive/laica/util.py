@@ -10,7 +10,7 @@ class CapnpEncoder(json.JSONEncoder):
   DYNAMIC_ENUM_MARKER = "_de_"
 
   def default(self, obj):
-    if isinstance(obj, capnp.lib.capnp._DynamicStructBuilder):
+    if isinstance(obj, capnp.lib.capnp._DynamicStructBuilder) or isinstance(obj, capnp.lib.capnp._DynamicStructReader):
       return obj.to_dict()
     return json.JSONEncoder.default(self, obj)
   
