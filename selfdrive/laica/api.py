@@ -4,7 +4,7 @@ from openpilot.common.realtime import set_core_affinity
 from openpilot.common.swaglog import cloudlog
 from flask import Flask, jsonify, make_response
 
-from .util import capnp_to_json
+from openpilot.selfdrive.laica.util import capnp_to_json
 
 
 app = Flask(__name__)
