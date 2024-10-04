@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from typing import Dict
 from cereal import messaging
 from openpilot.common.realtime import set_core_affinity
 from openpilot.common.swaglog import cloudlog
@@ -8,6 +9,7 @@ from openpilot.selfdrive.laica.util import capnp_to_json
 
 
 app = Flask(__name__)
+sm_map: Dict[str, messaging.SubMaster] = {}
 
 @app.errorhandler(500)
 def internal_error(error):
@@ -15,7 +17,12 @@ def internal_error(error):
 
 @app.route('/data/<service>', methods=['GET'])
 def data(service):
-  sm = messaging.SubMaster([service])
+  sm = sm_map.get(service, None)
+
+  if sm is None:
+    sm = messaging.SubMaster([service])
+    sm_map[service] = sm
+  
   sm.update()
 
   json = capnp_to_json(sm[service])
