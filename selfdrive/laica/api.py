@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from typing import Dict
 from cereal import messaging
+from openpilot.common.params import Params
 from openpilot.common.realtime import set_core_affinity
 from openpilot.common.swaglog import cloudlog
 from flask import Flask, jsonify, make_response
@@ -10,6 +11,10 @@ from openpilot.selfdrive.laica.util import capnp_to_json
 
 app = Flask(__name__)
 sm_map: Dict[str, messaging.SubMaster] = {}
+
+params_reader = Params()
+params_memory = Params("/dev/shm/params")
+
 
 @app.errorhandler(500)
 def internal_error(error):
@@ -31,6 +36,21 @@ def data(service):
 
   return res
 
+@app.route('/params/<key>', methods=['GET'])
+def params(key):
+  data = params_memory.get(key)
+  res = make_response(data or '{}')
+  res.headers['Content-Type'] = 'application/json'
+
+  return res
+
+@app.route('/params_memory/<key>', methods=['GET'])
+def params_memory(key):
+  data = params_memory.get(key)
+  res = make_response(data or '{}')
+  res.headers['Content-Type'] = 'application/json'
+
+  return res
 
 def main():
   try:
